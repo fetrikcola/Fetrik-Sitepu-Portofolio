@@ -73,3 +73,22 @@ document.addEventListener('DOMContentLoaded', function () {
         navDots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
     });
 });
+
+// SKILL TABS SWITCHING
+const skillTabs = document.querySelectorAll('.skill-tab');
+const skillContents = document.querySelectorAll('.skill-content');
+
+skillTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-skill');
+
+        // remove active from all tabs & contents
+        skillTabs.forEach(t => t.classList.remove('active'));
+        skillContents.forEach(c => c.classList.remove('active'));
+
+        // add active to current
+        tab.classList.add('active');
+        const targetContent = document.getElementById(target);
+        if (targetContent) targetContent.classList.add('active');
+    });
+});
