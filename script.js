@@ -1,97 +1,75 @@
-let currentSlide = 0;
-const totalSlides = 6;
-const container = document.getElementById('container');
-const navDots = document.querySelectorAll('.nav-dot');
-const skillTabs = document.querySelectorAll('.skill-tab');
-const skillContents = document.querySelectorAll('.skill-content');
+document.addEventListener('DOMContentLoaded', function () {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navDots = document.querySelectorAll('.nav-dot');
+    const slides = document.querySelectorAll('.slide');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navMenu = document.querySelector('.nav-menu');
 
-// Navigation function
-function goToSlide(slideIndex) {
-    currentSlide = slideIndex;
-    container.style.transform = `translateX(-${slideIndex * 100}vw)`;
-    
-    // Update nav dots
-    navDots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === slideIndex);
-    });
-}
+    //-------------------------------------
+    /**
+     *  Scroll to specific section (Vertically)
+     *  its based on var "index"
+     *  using condition if index on slide, it will slide to the requested slide
+     *  only when the slide is not open yet
+     */
+    function goToSection(index) {
+        const targetSlide = slides[index];
+        if (targetSlide) {
+            targetSlide.scrollIntoView({ behavior: 'smooth' });
 
-// Nav dots click event
-navDots.forEach((dot, index) => {
-    dot.addEventListener('click', () => goToSlide(index));
-});
-
-// Keyboard navigation
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' && currentSlide < totalSlides - 1) {
-        goToSlide(currentSlide + 1);
-    } else if (e.key === 'ArrowLeft' && currentSlide > 0) {
-        goToSlide(currentSlide - 1);
-    }
-});
-
-// Touch/swipe navigation
-let touchStartX = 0;
-let touchEndX = 0;
-
-document.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-});
-
-document.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-});
-
-function handleSwipe() {
-    const swipeThreshold = 50;
-    const diff = touchStartX - touchEndX;
-    
-    if (Math.abs(diff) > swipeThreshold) {
-        if (diff > 0 && currentSlide < totalSlides - 1) {
-            goToSlide(currentSlide + 1);
-        } else if (diff < 0 && currentSlide > 0) {
-            goToSlide(currentSlide - 1);
+            // Update nav indicators
+            navLinks.forEach((link, i) => {
+                link.classList.toggle('active', i === index);
+            });
+            navDots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
         }
     }
-}
 
-// Skills tab functionality
-skillTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        const skillType = tab.dataset.skill;
-        
-        // Remove active class from all tabs and contents
-        skillTabs.forEach(t => t.classList.remove('active'));
-        skillContents.forEach(c => c.classList.remove('active'));
-        
-        // Add active class to clicked tab and corresponding content
-        tab.classList.add('active');
-        document.getElementById(skillType).classList.add('active');
+    // Handle click on nav links
+    navLinks.forEach((link, index) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToSection(index);
+
+            // Close mobile menu
+            navMenu?.classList.remove('active');
+            mobileMenu?.classList.remove('active');
+        });
     });
-});
 
-// Mouse wheel navigation
-let isScrolling = false;
-document.addEventListener('wheel', (e) => {
-    if (isScrolling) return;
-    
-    isScrolling = true;
-    setTimeout(() => isScrolling = false, 800);
-    
-    if (e.deltaY > 0 && currentSlide < totalSlides - 1) {
-        goToSlide(currentSlide + 1);
-    } else if (e.deltaY < 0 && currentSlide > 0) {
-        goToSlide(currentSlide - 1);
-    }
-});
+    // Handle click on nav dots (if used)
+    navDots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            goToSection(index);
+        });
+    });
 
-// Add click functionality to skill tags
-document.querySelectorAll('.skill-tag').forEach(tag => {
-    tag.addEventListener('click', () => {
-        tag.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            tag.style.transform = 'scale(1)';
-        }, 150);
+    // Mobile menu toggle
+    mobileMenu?.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+    });
+
+    // Close mobile menu on outside click
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.navbar')) {
+            navMenu?.classList.remove('active');
+            mobileMenu?.classList.remove('active');
+        }
+    });
+
+    // Optional: Highlight nav item on scroll
+    window.addEventListener('scroll', () => {
+        let currentIndex = 0;
+        slides.forEach((slide, index) => {
+            const rect = slide.getBoundingClientRect();
+            if (rect.top <= window.innerHeight / 2 && rect.bottom >= 0) {
+                currentIndex = index;
+            }
+        });
+        navLinks.forEach((link, i) => link.classList.toggle('active', i === currentIndex));
+        navDots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
     });
 });
