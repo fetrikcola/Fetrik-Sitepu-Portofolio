@@ -1485,3 +1485,47 @@ body::-webkit-scrollbar-thumb {
         font-size: clamp(2.2rem, 9vw, 3rem);
     }
 }
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .slide {
+    min-width: 100%;
+    padding: var(--spacing-md);
+    flex-direction: column;
+  }
+
+  .hero,
+  .about,
+  .skills,
+  .education,
+  .projects,
+  .contact {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .hero-content,
+  .about-content,
+  .about-image,
+  .education-item,
+  .project-item {
+    width: 100% !important;
+    min-width: unset;
+    padding: var(--spacing-md);
+  }
+
+  .project-image {
+    height: auto;
+  }
+
+  .project-image img,
+  .about-image img {
+    width: 100%;
+    height: auto;
+  }
+}
